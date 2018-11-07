@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fable.insightview.platform.mapper.DepartmentMapper" >
+
+   <select id="queryDepartTree" parameterType="hashmap" resultType="com.fable.insightview.platform.entity.DepartmentBean">
+         
+       SELECT dept.DeptID AS deptId,
+              dept.DeptName AS deptName,
+              dept.DeptCode AS deptCode,
+              dept.OrganizationID AS organizationID,
+              dept.ParentDeptID AS parentDeptID,
+              dept.HeadOfDept AS headOfDept,
+              dept.Descr AS descr,
+              (SELECT count(dept2.DeptID) FROM SysDepartment dept2 WHERE dept2.ParentDeptID=dept.DeptID) count
+         FROM SysDepartment dept 
+        WHERE dept.ParentDeptID = #{deptID}
+   
+   </select>
+   
+   
+      <select id="queryDepartByOrgID" parameterType="hashmap" resultType="com.fable.insightview.platform.entity.DepartmentBean">
+         
+       SELECT dept.DeptID AS deptId,
+              dept.DeptName AS deptName,
+              dept.DeptCode AS deptCode,
+              dept.OrganizationID AS organizationID,
+              dept.ParentDeptID AS parentDeptID,
+              dept.HeadOfDept AS headOfDept,
+              dept.Descr AS descr,
+              (SELECT count(dept2.DeptID) FROM SysDepartment dept2 WHERE dept2.ParentDeptID=dept.DeptID) count
+         FROM SysDepartment dept 
+        WHERE dept.OrganizationID = #{orgID}
+        and dept.ParentDeptID = 0
+   
+   </select>
+
+    <select id="queryDepartByDepName" resultType="com.fable.insightview.platform.entity.DepartmentBean" parameterType="java.lang.String">
+        SELECT * FROM SysDepartment where DeptName = #{name,jdbcType=VARCHAR} limit 1;
+    </select>
+   
+
+</mapper>

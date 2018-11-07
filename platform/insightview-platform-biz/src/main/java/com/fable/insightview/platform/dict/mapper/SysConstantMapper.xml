@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fable.insightview.platform.dict.mapper.SysConstantMapper" > 
+	
+   <select id="querySysConstant" resultType="hashmap" parameterType="hashmap">
+  	  SELECT ID,ConstantItemId,ConstantItemName FROM SysConstantItemDef
+  	  <where>
+  	  	  <if test="ConstantTypeId != null and ConstantTypeId != '' " >
+	        and ConstantTypeId = #{ConstantTypeId}  
+	      </if>
+	      <if test="ConstantItemName != null and ConstantItemName != '' " >
+	        and ConstantItemName LIKE CONCAT('%',#{ConstantItemName},'%')
+	      </if>
+  	  </where>
+  </select>  
+  
+</mapper>

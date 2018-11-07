@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fable.insightview.platform.mapper.OrganizationMapper" >
+
+   
+   <select id="queryOrgList" parameterType="Integer" resultType="com.fable.insightview.platform.entity.OrganizationBean">
+        SELECT org.OrganizationID AS organizationID,
+               org.ParentOrgID AS parentOrgID,
+               org.OrganizationName AS organizationName,
+               org.OrganizationCode AS organizationCode,
+               org.Descr AS descr,
+               (SELECT count(org2.OrganizationID) FROM SysOrganization org2 WHERE org2.ParentOrgID=org.OrganizationID) count
+       FROM SysOrganization org WHERE org.ParentOrgID = #{orgID}
+   </select>
+   
+      
+   <select id="queryOrgAll"  resultType="com.fable.insightview.platform.entity.OrganizationBean">
+        SELECT org.OrganizationID AS organizationID,
+               org.ParentOrgID AS parentOrgID,
+               org.OrganizationName AS organizationName,
+               org.OrganizationCode AS organizationCode,
+               org.Descr AS descr,
+               (SELECT count(dept.OrganizationID) FROM SysDepartment dept WHERE dept.OrganizationID=org.OrganizationID) count
+          FROM SysOrganization org 
+       
+   </select>
+   
+
+    <select id="queryOrgConditionList" parameterType="Integer" resultType="com.fable.insightview.platform.entity.OrganizationBean">
+        SELECT org.OrganizationID AS organizationID,
+               org.ParentOrgID AS parentOrgID,
+               org.OrganizationName AS organizationName,
+               org.OrganizationCode AS organizationCode,
+               org.Descr AS descr
+         FROM SysOrganization org 
+        WHERE org.OrganizationID = #{orgID}  
+           OR ParentOrgID = #{orgID}  
+    
+    </select>
+   
+
+    <select id="queryOrgProviderTree" parameterType="Integer" resultType="com.fable.insightview.platform.entity.OrganizationBean">
+          SELECT distinct o.OrganizationID, 
+                          o.ParentOrgID, 
+                          o.OrganizationName, 
+                          o.OrganizationCode, 
+                          o.Descr, 
+                          (SELECT count(dept.OrganizationID) FROM SysDepartment dept WHERE dept.OrganizationID=org.OrganizationID) count
+            FROM SysOrganization  o  
+       LEFT JOIN SysEmployment e ON o.OrganizationID = e.OrganizationID 
+           WHERE o.OrganizationID 
+          NOT IN (  SELECT e.OrganizationID 
+                      FROM SysEmployment e 
+                     WHERE e.UserID 
+                       IN (  SELECT u.UserID 
+                               FROM SysUserInfo u 
+                              WHERE u.UserType = 3 ))
+            AND o.ParentOrgID=#{orgID}
+    </select>
+
+
+
+
+
+
+</mapper>
